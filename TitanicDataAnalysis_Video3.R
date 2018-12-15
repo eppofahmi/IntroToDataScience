@@ -160,7 +160,6 @@ ggplot(data.combined[1:891,], aes(x = age, fill = survived)) +
 boys <- data.combined[which(data.combined$title == "Master."),]
 summary(boys$age)
 
-
 # We know that "Miss." is more complicated, let's examine further
 misses <- data.combined[which(data.combined$title == "Miss."),]
 summary(misses$age)
@@ -179,10 +178,8 @@ misses.alone <- misses[which(misses$sibsp == 0 & misses$parch == 0),]
 summary(misses.alone$age)
 length(which(misses.alone$age <= 14.5))
 
-
 # Move on to the sibsp variable, summarize the variable
 summary(data.combined$sibsp)
-
 
 # Can we treat as a factor?
 length(unique(data.combined$sibsp))
@@ -230,29 +227,18 @@ ggplot(data.combined[1:891,], aes(x = family.size, fill = survived)) +
   ylim(0,300) +
   labs(fill = "Survived")
 
-
-
-
-
-
-
-
-
 # Take a look at the ticket variable
 str(data.combined$ticket)
-
 
 # Based on the huge number of levels ticket really isn't a factor variable it is a string. 
 # Convert it and display first 20
 data.combined$ticket <- as.character(data.combined$ticket)
 data.combined$ticket[1:20]
 
-
 # There's no immediately apparent structure in the data, let's see if we can find some.
 # We'll start with taking a look at just the first char for each
 ticket.first.char <- ifelse(data.combined$ticket == "", " ", substr(data.combined$ticket, 1, 1))
 unique(ticket.first.char)
-
 
 # OK, we can make a factor for analysis purposes and visualize
 data.combined$ticket.first.char <- as.factor(ticket.first.char)
@@ -286,13 +272,9 @@ ggplot(data.combined[1:891,], aes(x = ticket.first.char, fill = survived)) +
   ylim(0,200) +
   labs(fill = "Survived")
 
-
-
-
 # Next up - the fares Titanic passengers paid
 summary(data.combined$fare)
 length(unique(data.combined$fare))
-
 
 # Can't make fare a factor, treat as numeric & visualize with histogram
 ggplot(data.combined, aes(x = fare)) +
@@ -313,28 +295,21 @@ ggplot(data.combined[1:891,], aes(x = fare, fill = survived)) +
   ylim(0,50) + 
   labs(fill = "Survived")
 
-
-
-
 # Analysis of the cabin variable
 str(data.combined$cabin)
-
 
 # Cabin really isn't a factor, make a string and the display first 100
 data.combined$cabin <- as.character(data.combined$cabin)
 data.combined$cabin[1:100]
 
-
 # Replace empty cabins with a "U"
 data.combined[which(data.combined$cabin == ""), "cabin"] <- "U"
 data.combined$cabin[1:100]
-
 
 # Take a look at just the first char as a factor
 cabin.first.char <- as.factor(substr(data.combined$cabin, 1, 1))
 str(cabin.first.char)
 levels(cabin.first.char)
-
 
 # Add to combined data set and plot 
 data.combined$cabin.first.char <- cabin.first.char
@@ -381,13 +356,9 @@ ggplot(data.combined[1:891,], aes(x = cabin.multiple, fill = survived)) +
   ylim(0,350) +
   labs(fill = "Survived")
 
-
-
-
 # Does survivability depend on where you got onboard the Titanic?
 str(data.combined$embarked)
 levels(data.combined$embarked)
-
 
 # Plot data for analysis
 ggplot(data.combined[1:891,], aes(x = embarked, fill = survived)) +
@@ -398,4 +369,3 @@ ggplot(data.combined[1:891,], aes(x = embarked, fill = survived)) +
   ylab("Total Count") +
   ylim(0,300) +
   labs(fill = "Survived")
-

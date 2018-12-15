@@ -60,13 +60,11 @@ ggplot(train, aes(x = pclass, fill = factor(survived))) +
   ylab("Total Count") +
   labs(fill = "Survived") 
 
-
 # Examine the first few names in the training data set
 head(as.character(train$name))
 
 # How many unique names are there across both train & test?
 length(unique(as.character(data.combined$name)))
-
 
 # Two duplicate names, take a closer look
 # First, get the duplicate names and store them as a vector
@@ -75,14 +73,12 @@ dup.names <- as.character(data.combined[which(duplicated(as.character(data.combi
 # Next, take a look at the records in the combined data set
 data.combined[which(data.combined$name %in% dup.names),]
 
-
 # What is up with the 'Miss.' and 'Mr.' thing?
 library(stringr)
 
 # Any correlation with other variables (e.g., sibsp)?
 misses <- data.combined[which(str_detect(data.combined$name, "Miss.")),]
 misses[1:5,]
-
 
 # Hypothesis - Name titles correlate with age
 mrses <- data.combined[which(str_detect(data.combined$name, "Mrs.")), ]
@@ -92,9 +88,7 @@ mrses[1:5,]
 males <- data.combined[which(data.combined$sex == "male"), ]
 males[1:5,]
 
-
-# Expand upon the realtionship between `Survived` and `Pclass` by adding the new `Title` variable to the
-# data set and then explore a potential 3-dimensional relationship.
+# Expand upon the realtionship between `Survived` and `Pclass` by adding the new `Title` variable to the data set and then explore a potential 3-dimensional relationship.
 
 # Create a utility function to help with title extraction
 extractTitle <- function(name) {
@@ -132,7 +126,6 @@ ggplot(data.combined[1:891,], aes(x = title, fill = survived)) +
 # What's the distribution of females to males across train & test?
 table(data.combined$sex)
 
-
 # Visualize the 3-way relationship of sex, pclass, and survival, compare to analysis of title
 ggplot(data.combined[1:891,], aes(x = sex, fill = survived)) +
   geom_bar() +
@@ -142,9 +135,7 @@ ggplot(data.combined[1:891,], aes(x = sex, fill = survived)) +
   ylab("Total Count") +
   labs(fill = "Survived")
 
-
-# OK, age and sex seem pretty important as derived from analysis of title, let's take a closer 
-# look at the distibutions of age over entire data set
+# OK, age and sex seem pretty important as derived from analysis of title, let's take a closer look at the distibutions of age over entire data set
 summary(data.combined$age)
 summary(data.combined[1:891,"age"])
 
@@ -155,11 +146,9 @@ ggplot(data.combined[1:891,], aes(x = age, fill = survived)) +
   xlab("Age") +
   ylab("Total Count")
 
-
 # Validate that "Master." is a good proxy for male children
 boys <- data.combined[which(data.combined$title == "Master."),]
 summary(boys$age)
-
 
 # We know that "Miss." is more complicated, let's examine further
 misses <- data.combined[which(data.combined$title == "Miss."),]
@@ -172,26 +161,21 @@ ggplot(misses[misses$survived != "None" & !is.na(misses$age),], aes(x = age, fil
   xlab("Age") +
   ylab("Total Count")
 
+# OK, appears female children may have different survival rate, could be a candidate for feature engineering later
 
-# OK, appears female children may have different survival rate, 
-# could be a candidate for feature engineering later
 misses.alone <- misses[which(misses$sibsp == 0 & misses$parch == 0),]
 summary(misses.alone$age)
 length(which(misses.alone$age <= 14.5))
 
-
 # Move on to the sibsp variable, summarize the variable
 summary(data.combined$sibsp)
-
 
 # Can we treat as a factor?
 length(unique(data.combined$sibsp))
 
-
 data.combined$sibsp <- as.factor(data.combined$sibsp)
 
-
-# We believe title is predictive. Visualize survival reates by sibsp, pclass, and title
+# We believe title is predictive. Visualize survival rates by sibsp, pclass, and title
 ggplot(data.combined[1:891,], aes(x = sibsp, fill = survived)) +
   geom_bar() +
   facet_wrap(~pclass + title) + 
@@ -200,7 +184,6 @@ ggplot(data.combined[1:891,], aes(x = sibsp, fill = survived)) +
   ylab("Total Count") +
   ylim(0,300) +
   labs(fill = "Survived")
-
 
 # Treat the parch vaiable as a factor and visualize
 data.combined$parch <- as.factor(data.combined$parch)
@@ -212,7 +195,6 @@ ggplot(data.combined[1:891,], aes(x = parch, fill = survived)) +
   ylab("Total Count") +
   ylim(0,300) +
   labs(fill = "Survived")
-
 
 # Let's try some feature engineering. What about creating a family size feature?
 temp.sibsp <- c(train$sibsp, test$sibsp)
@@ -230,29 +212,18 @@ ggplot(data.combined[1:891,], aes(x = family.size, fill = survived)) +
   ylim(0,300) +
   labs(fill = "Survived")
 
-
-
-
-
-
-
-
-
 # Take a look at the ticket variable
 str(data.combined$ticket)
-
 
 # Based on the huge number of levels ticket really isn't a factor variable it is a string. 
 # Convert it and display first 20
 data.combined$ticket <- as.character(data.combined$ticket)
 data.combined$ticket[1:20]
 
-
 # There's no immediately apparent structure in the data, let's see if we can find some.
 # We'll start with taking a look at just the first char for each
 ticket.first.char <- ifelse(data.combined$ticket == "", " ", substr(data.combined$ticket, 1, 1))
 unique(ticket.first.char)
-
 
 # OK, we can make a factor for analysis purposes and visualize
 data.combined$ticket.first.char <- as.factor(ticket.first.char)
@@ -286,13 +257,9 @@ ggplot(data.combined[1:891,], aes(x = ticket.first.char, fill = survived)) +
   ylim(0,200) +
   labs(fill = "Survived")
 
-
-
-
 # Next up - the fares Titanic passengers paid
 summary(data.combined$fare)
 length(unique(data.combined$fare))
-
 
 # Can't make fare a factor, treat as numeric & visualize with histogram
 ggplot(data.combined, aes(x = fare)) +
@@ -301,7 +268,6 @@ ggplot(data.combined, aes(x = fare)) +
   xlab("Fare") +
   ylab("Total Count") +
   ylim(0,200)
-
 
 # Let's check to see if fare has predictive power
 ggplot(data.combined[1:891,], aes(x = fare, fill = survived)) +
@@ -313,28 +279,21 @@ ggplot(data.combined[1:891,], aes(x = fare, fill = survived)) +
   ylim(0,50) + 
   labs(fill = "Survived")
 
-
-
-
 # Analysis of the cabin variable
 str(data.combined$cabin)
-
 
 # Cabin really isn't a factor, make a string and the display first 100
 data.combined$cabin <- as.character(data.combined$cabin)
 data.combined$cabin[1:100]
 
-
 # Replace empty cabins with a "U"
 data.combined[which(data.combined$cabin == ""), "cabin"] <- "U"
 data.combined$cabin[1:100]
-
 
 # Take a look at just the first char as a factor
 cabin.first.char <- as.factor(substr(data.combined$cabin, 1, 1))
 str(cabin.first.char)
 levels(cabin.first.char)
-
 
 # Add to combined data set and plot 
 data.combined$cabin.first.char <- cabin.first.char
@@ -368,7 +327,6 @@ ggplot(data.combined[1:891,], aes(x = cabin.first.char, fill = survived)) +
   ylim(0,500) +
   labs(fill = "Survived")
 
-
 # What about folks with multiple cabins?
 data.combined$cabin.multiple <- as.factor(ifelse(str_detect(data.combined$cabin, " "), "Y", "N"))
 
@@ -381,13 +339,9 @@ ggplot(data.combined[1:891,], aes(x = cabin.multiple, fill = survived)) +
   ylim(0,350) +
   labs(fill = "Survived")
 
-
-
-
 # Does survivability depend on where you got onboard the Titanic?
 str(data.combined$embarked)
 levels(data.combined$embarked)
-
 
 # Plot data for analysis
 ggplot(data.combined[1:891,], aes(x = embarked, fill = survived)) +
@@ -406,7 +360,6 @@ ggplot(data.combined[1:891,], aes(x = embarked, fill = survived)) +
 #
 #==============================================================================
 
-
 library(randomForest)
 
 # Train a Random Forest with the default parameters using pclass & title
@@ -418,8 +371,6 @@ rf.1 <- randomForest(x = rf.train.1, y = rf.label, importance = TRUE, ntree = 10
 rf.1
 varImpPlot(rf.1)
 
-
-
 # Train a Random Forest using pclass, title, & sibsp
 rf.train.2 <- data.combined[1:891, c("pclass", "title", "sibsp")]
 
@@ -427,8 +378,6 @@ set.seed(1234)
 rf.2 <- randomForest(x = rf.train.2, y = rf.label, importance = TRUE, ntree = 1000)
 rf.2
 varImpPlot(rf.2)
-
-
 
 # Train a Random Forest using pclass, title, & parch
 rf.train.3 <- data.combined[1:891, c("pclass", "title", "parch")]
@@ -438,8 +387,6 @@ rf.3 <- randomForest(x = rf.train.3, y = rf.label, importance = TRUE, ntree = 10
 rf.3
 varImpPlot(rf.3)
 
-
-
 # Train a Random Forest using pclass, title, sibsp, parch
 rf.train.4 <- data.combined[1:891, c("pclass", "title", "sibsp", "parch")]
 
@@ -447,8 +394,6 @@ set.seed(1234)
 rf.4 <- randomForest(x = rf.train.4, y = rf.label, importance = TRUE, ntree = 1000)
 rf.4
 varImpPlot(rf.4)
-
-
 
 # Train a Random Forest using pclass, title, & family.size
 rf.train.5 <- data.combined[1:891, c("pclass", "title", "family.size")]
@@ -458,8 +403,6 @@ rf.5 <- randomForest(x = rf.train.5, y = rf.label, importance = TRUE, ntree = 10
 rf.5
 varImpPlot(rf.5)
 
-
-
 # Train a Random Forest using pclass, title, sibsp, & family.size
 rf.train.6 <- data.combined[1:891, c("pclass", "title", "sibsp", "family.size")]
 
@@ -467,8 +410,6 @@ set.seed(1234)
 rf.6 <- randomForest(x = rf.train.6, y = rf.label, importance = TRUE, ntree = 1000)
 rf.6
 varImpPlot(rf.6)
-
-
 
 # Train a Random Forest using pclass, title, parch, & family.size
 rf.train.7 <- data.combined[1:891, c("pclass", "title", "parch", "family.size")]
@@ -478,7 +419,6 @@ rf.7 <- randomForest(x = rf.train.7, y = rf.label, importance = TRUE, ntree = 10
 rf.7
 varImpPlot(rf.7)
 
-
 #==============================================================================
 #
 # Video #5 - Cross Validation
@@ -486,10 +426,7 @@ varImpPlot(rf.7)
 #==============================================================================
 
 
-# Before we jump into features engineering we need to establish a methodology
-# for estimating our error rate on the test set (i.e., unseen data). This is
-# critical, for without this we are more likely to overfit. Let's start with a 
-# submission of rf.5 to Kaggle to see if our OOB error estimate is accurate.
+# Before we jump into features engineering we need to establish a methodology for estimating our error rate on the test set (i.e., unseen data). This is critical, for without this we are more likely to overfit. Let's start with a submission of rf.5 to Kaggle to see if our OOB error estimate is accurate.
 
 # Subset our test records and features
 test.submit.df <- data.combined[892:1309, c("pclass", "title", "family.size")]
@@ -509,16 +446,10 @@ write.csv(submit.df, file = "RF_SUB_20160215_1.csv", row.names = FALSE)
 library(caret)
 library(doSNOW)
 
+# Research has shown that 10-fold CV repeated 10 times is the best place to start, however there are no hard and fast rules - this is where the experience of the Data Scientist (i.e., the "art") comes into play. We'll start with 10-fold CV, repeated 10 times and see how it goes.
 
-# Research has shown that 10-fold CV repeated 10 times is the best place to start,
-# however there are no hard and fast rules - this is where the experience of the 
-# Data Scientist (i.e., the "art") comes into play. We'll start with 10-fold CV,
-# repeated 10 times and see how it goes.
+# Leverage caret to create 100 total folds, but ensure that the ratio of those that survived and perished in each fold matches the overall training set. This is known as stratified cross validation and generally provides better results.
 
-
-# Leverage caret to create 100 total folds, but ensure that the ratio of those
-# that survived and perished in each fold matches the overall training set. This
-# is known as stratified cross validation and generally provides better results.
 set.seed(2348)
 cv.10.folds <- createMultiFolds(rf.label, k = 10, times = 10)
 
@@ -534,13 +465,12 @@ table(rf.label[cv.10.folds[[33]]])
 ctrl.1 <- trainControl(method = "repeatedcv", number = 10, repeats = 10,
                        index = cv.10.folds)
 
-
-# Set up doSNOW package for multi-core training. This is helpful as we're going
-# to be training a lot of trees.
+# Set up doSNOW package for multi-core training. This is helpful as we're going to be training a lot of trees.
 # NOTE - This works on Windows and Mac, unlike doMC
+library(doSNOW)
+
 cl <- makeCluster(6, type = "SOCK")
 registerDoSNOW(cl)
-
 
 # Set seed for reproducibility and train
 set.seed(34324)
@@ -552,7 +482,6 @@ stopCluster(cl)
 
 # Check out results
 rf.5.cv.1
-
 
 # The above is only slightly more pessimistic than the rf.5 OOB prediction, but 
 # not pessimistic enough. Let's try 5-fold CV repeated 10 times.
@@ -896,7 +825,7 @@ write.csv(submit.df, file = "RF_SUB_20160619_1.csv", row.names = FALSE)
 # First, let's explore our collection of features using mutual information to
 # gain some additional insight. Our intuition is that the plot of our tree
 # should align well to the definition of mutual information.
-#install.packages("infotheo")
+install.packages("infotheo")
 library(infotheo)
 
 mutinformation(rf.label, data.combined$pclass[1:891])
@@ -953,6 +882,7 @@ misters <- data.combined[data.combined$new.title == "Mr.",]
 indexes <- which(misters$survived != "None")
 
 tsne.2 <- Rtsne(misters[, features], check_duplicates = FALSE)
+
 ggplot(NULL, aes(x = tsne.2$Y[indexes, 1], y = tsne.2$Y[indexes, 2], 
                  color = misters$survived[indexes])) +
   geom_point() +
